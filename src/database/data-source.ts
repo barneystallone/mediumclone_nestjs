@@ -5,14 +5,15 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 
 dotenvExpand.expand(dotenv.config({ path: `.env.${process.env.NODE_ENV}` }));
 export const dataSourceOptions = (): DataSourceOptions => {
-  return {
-    type: 'postgres',
-    url: process.env.DB_URL,
-    entities: ['dist/**/*.entity{.ts,.js}'],
-    migrations: ['dist/database/migrations/*.js'],
-  } as const satisfies TypeOrmModuleOptions;
+	return {
+		type: 'postgres',
+		url: process.env.DB_URL,
+		logging: 'all',
+		entities: ['dist/**/*.entity{.ts,.js}'],
+		migrations: ['dist/database/migrations/*.js'],
+	} as const satisfies TypeOrmModuleOptions;
 };
 
 export default new DataSource({
-  ...dataSourceOptions(),
+	...dataSourceOptions(),
 });

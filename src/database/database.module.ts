@@ -1,8 +1,8 @@
-import typeormConfig from '@/database/config/orm.config';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ormConfig } from './config';
 
 @Module({
-  imports: [TypeOrmModule.forRootAsync(typeormConfig.asProvider())],
+	imports: [TypeOrmModule.forRootAsync(ormConfig.asProvider())],
 })
 export class DatabaseModule {}

@@ -2,10 +2,10 @@
 import { dataSourceOptions } from '@/database/data-source';
 import { registerAs } from '@nestjs/config';
 
-export default registerAs('database', () => {
-  const config = {
-    ...dataSourceOptions(),
-    autoLoadEntities: true,
-  };
-  return config;
+export const ormConfig = registerAs('database', () => {
+	const config = {
+		...dataSourceOptions(),
+		autoLoadEntities: true,
+	};
+	return config;
 });

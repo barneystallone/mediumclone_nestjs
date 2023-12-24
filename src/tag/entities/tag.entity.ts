@@ -3,12 +3,12 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'tags' })
 export class TagEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+	@PrimaryGeneratedColumn()
+	id: number;
 
-  @Column()
-  name: string;
+	@Column()
+	name: string;
 
-  @Column(() => TimeSeries, { prefix: false })
-  timeSeries: TimeSeries;
+	@Column(() => TimeSeries, { prefix: false })
+	timeSeries: TimeSeries;
 }
