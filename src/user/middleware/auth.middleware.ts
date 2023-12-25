@@ -31,7 +31,11 @@ export class AuthMiddleware implements NestMiddleware {
 
 			const user = await this.userService
 				.findByEmail(decode.email)
-				.then((user) => unSelect(user, ['password', 'hashPassword']));
+				.then((user) => {
+					const newUser = unSelect(user, ['password', 'hashPassword']);
+					return newUser;
+				});
+
 			req.user = user;
 
 			return next();
