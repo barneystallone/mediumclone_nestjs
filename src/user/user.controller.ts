@@ -1,17 +1,15 @@
-import { ExpressRequest } from '@/common/types';
 import {
 	Body,
 	Controller,
 	Get,
 	Post,
-	Req,
 	UsePipes,
 	ValidationPipe,
 } from '@nestjs/common';
+import { GetUser } from './decorators/user.decorator';
 import { CreateUserDto, LoginUserDto } from './dto';
-import { UserResponse } from './types';
+import { UserJWT, UserResponse } from './types';
 import { UserService } from './user.service';
-
 @Controller('user')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
@@ -33,8 +31,14 @@ export class UserController {
 	}
 
 	@Get()
-	async getCurrentUser(@Req() req: ExpressRequest): Promise<any> {
+	async getCurrentUser(
+		@GetUser() user: UserJWT | null,
+		@GetUser('email') email: string | null,
+	): Promise<any> {
 		// return req.headers['authorization'] =
-		return req.user;
+		return {
+			user,
+			email,
+		};
 	}
 }

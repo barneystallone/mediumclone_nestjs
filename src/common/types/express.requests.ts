@@ -1,6 +1,6 @@
-import { UserEntity } from '@/user/entities';
+import { UserJWT } from '@/user/types';
 import { Request } from 'express';
 
 export interface ExpressRequest extends Request {
-	user?: UserEntity;
+	user?: UserJWT;
 }
