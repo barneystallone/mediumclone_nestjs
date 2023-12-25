@@ -5,7 +5,7 @@ import { EnvModule } from '@/env/env.module';
 // import { AuthMiddleware, UserController, UserModule } from '@user';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TagModule } from '@tag/tag.module';
-import { AuthMiddleware } from '@user/middleware';
+import { AuthMiddleware } from '@user/auth';
 import { UserController } from '@user/user.controller';
 import { UserModule } from '@user/user.module';
 

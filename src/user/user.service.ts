@@ -1,3 +1,4 @@
+import { omit } from '@/common/utils';
 import { Env } from '@/env/schema';
 import {
 	BadRequestException,
@@ -6,10 +7,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDto, LoginUserDto } from '@user/dto';
+import { CreateUserDto, LoginUserDto, UpdateUserDto } from '@user/dto';
 import { UserEntity } from '@user/entities';
 import { UserJWT, UserResponse } from '@user/types';
 import { compare } from 'bcrypt';
+import { plainToClass } from 'class-transformer';
 import { sign } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 
@@ -39,9 +41,9 @@ export class UserService {
 		if (foundUser) {
 			throw new UnprocessableEntityException('user or email are existing');
 		}
-
+		const newUser = plainToClass(UserEntity, createUserDto);
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { password, ...rest } = await this.userRepository.save(createUserDto);
+		const { password, ...rest } = await this.userRepository.save(newUser);
 		const { email, username } = rest;
 
 		return {
@@ -63,6 +65,9 @@ export class UserService {
 		const { password: hashPassword, ...rest } = foundUser;
 		const { email, username } = rest;
 
+		console.log('loginUserDto::', loginUserDto);
+		console.log('hashPassword::', hashPassword);
+
 		const isValidPassword = await compare(loginUserDto.password, hashPassword);
 
 		if (!isValidPassword)
@@ -79,7 +84,19 @@ export class UserService {
 		return sign(data, this.configService.get<string>('JWT_SECRET'));
 	}
 
-	async findByEmail(email: string): Promise<UserEntity> {
-		return await this.userRepository.findOneBy({ email });
+	async findByEmail<K extends keyof UserEntity>(
+		email: string,
+		unSelect?: K[],
+	): Promise<Omit<UserEntity, K>> {
+		const foundUser = await this.userRepository.findOneBy({ email });
+		return omit(foundUser, unSelect);
+	}
+
+	async updateCurrentUser(
+		updateUserDto: UpdateUserDto,
+		email: string,
+	): Promise<Omit<UserEntity, 'hashPassword' | 'password'> | any> {
+		const updateUserData = plainToClass(UserEntity, updateUserDto);
+		return await this.userRepository.update({ email }, updateUserData);
 	}
 }

@@ -1,5 +1,4 @@
 import { ExpressRequest } from '@/common/types';
-import { unSelect } from '@/common/utils';
 import { Env } from '@/env/schema';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -16,7 +15,6 @@ export class AuthMiddleware implements NestMiddleware {
 
 	async use(req: ExpressRequest, res: Response, next: NextFunction) {
 		if (!req.headers.authorization) {
-			console.log('');
 			req.user = null;
 			return next();
 		}
@@ -29,17 +27,20 @@ export class AuthMiddleware implements NestMiddleware {
 				this.configService.get('JWT_SECRET'),
 			) as JwtPayload & { email: string };
 
-			const user = await this.userService
-				.findByEmail(decode.email)
-				.then((user) => {
-					const newUser = unSelect(user, ['password', 'hashPassword']);
-					return newUser;
-				});
+			const user = await this.userService.findByEmail(decode.email, [
+				'hashPassword',
+				'password',
+			]);
+			// .then((user) => {
+			// 	const newUser = omit(user, ['password', 'hashPassword']);
+			// 	return newUser;
+			// });
 
 			req.user = user;
 
 			return next();
 		} catch (e) {
+			console.error(e);
 			req.user = null;
 			return next();
 		}

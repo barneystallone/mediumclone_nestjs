@@ -1,4 +1,4 @@
-export function unSelect<T extends object, K extends keyof T>(
+export function omit<T extends object, K extends keyof T>(
 	obj: T,
 	keys: K[],
 ): Omit<T, K> {
@@ -14,7 +14,7 @@ export function unSelect<T extends object, K extends keyof T>(
 	return result;
 }
 
-export function select<T extends object, K extends keyof T>(
+export function pick<T extends object, K extends keyof T>(
 	obj: T,
 	keys: K[],
 ): Pick<T, K> {
